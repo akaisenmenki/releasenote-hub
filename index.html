@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Release Note Hub</title>
+</head>
+<body>
+  <h1>Release Note Hub</h1>
+  <p>Latest Releases</p>
+
+  <div id="releases">読み込み中...</div>
+
+  <script>
+    const apiUrl =
+      "https://script.google.com/macros/s/AKfycbzUtWl3OLZj7WKZOch82Z5WyUiYmUMTukH1cNcUH8SphhCOR07TGGskUQsugGmegAUQyA/exec";
+
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById("releases");
+        container.innerHTML = "";
+
+        data.forEach(release => {
+          const article = document.createElement("article");
+
+          article.innerHTML = `
+            <hr>
+            <p>${release.releaseDate} / ${release.category}</p>
+            <h2>${release.title}</h2>
+            <p>${release.summary}</p>
+            <details>
+              <summary>詳細を見る</summary>
+              <p>${release.detail}</p>
+            </details>
+          `;
+
+          container.appendChild(article);
+        });
+      })
+      .catch(error => {
+        document.getElementById("releases").textContent =
+          "リリース情報を取得できませんでした。";
+
+        console.error(error);
+      });
+  </script>
+</body>
+</html>
