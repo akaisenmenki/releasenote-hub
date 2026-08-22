@@ -1,142 +1,52 @@
 <!doctype html>
 <html lang="ja">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Release Note Hub - 公開されたリリース情報の一覧">
-    <title>Release Note Hub</title>
-    <style>
-      :root {
-        color-scheme: light;
-        --background: #f5f7fa;
-        --surface: #ffffff;
-        --text: #172033;
-        --muted: #667085;
-        --border: #dfe4ec;
-        --accent: #1f5eff;
-      }
-
-      * { box-sizing: border-box; }
-
-      body {
-        margin: 0;
-        background: var(--background);
-        color: var(--text);
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        line-height: 1.7;
-      }
-
-      header, main {
-        width: min(880px, calc(100% - 32px));
-        margin-inline: auto;
-      }
-
-      header { padding: 64px 0 32px; }
-      h1 { margin: 0 0 8px; font-size: clamp(2rem, 6vw, 3.5rem); }
-      header p, #status { margin: 0; color: var(--muted); }
-
-      .release-list {
-        display: grid;
-        gap: 16px;
-        padding: 24px 0 64px;
-      }
-
-      article {
-        padding: 24px;
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        background: var(--surface);
-        box-shadow: 0 8px 24px rgb(23 32 51 / 6%);
-      }
-
-      .metadata {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px 12px;
-        margin: 0 0 8px;
-        color: var(--muted);
-        font-size: 0.9rem;
-      }
-
-      .category {
-        padding: 1px 10px;
-        border-radius: 999px;
-        background: #e9efff;
-        color: #1746b0;
-        font-weight: 600;
-      }
-
-      h2 { margin: 0 0 8px; font-size: 1.35rem; }
-      article > p { margin: 0; }
-      details { margin-top: 16px; }
-      summary { color: var(--accent); cursor: pointer; font-weight: 600; }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>Release Note Hub</h1>
-      <p>サービスの新機能・改善・修正情報をお知らせします。</p>
-    </header>
-
-    <main>
-      <p id="status" role="status">リリース情報を読み込んでいます。</p>
-      <div id="releases" class="release-list" aria-live="polite"></div>
-    </main>
-
-    <script>
-      const apiUrl =
-        "https://script.google.com/macros/s/AKfycbzUtWl3OLZj7WKZOch82Z5WyUiYmUMTukH1cNcUH8SphhCOR07TGGskUQsugGmegAUQyA/exec";
-
-      const status = document.getElementById("status");
-      const container = document.getElementById("releases");
-
-      function appendTextElement(parent, tagName, text, className) {
-        const element = document.createElement(tagName);
-        element.textContent = text;
-        if (className) element.className = className;
-        parent.appendChild(element);
-        return element;
-      }
-
-      function renderRelease(release) {
-        const article = document.createElement("article");
-        const metadata = document.createElement("p");
-        metadata.className = "metadata";
-
-        appendTextElement(metadata, "time", release.releaseDate || "日付未設定");
-        appendTextElement(metadata, "span", release.category || "Other", "category");
-        article.appendChild(metadata);
-
-        appendTextElement(article, "h2", release.title || "タイトル未設定");
-        appendTextElement(article, "p", release.summary || "概要はありません。");
-
-        if (release.detail) {
-          const details = document.createElement("details");
-          appendTextElement(details, "summary", "詳細を見る");
-          appendTextElement(details, "p", release.detail);
-          article.appendChild(details);
-        }
-
-        container.appendChild(article);
-      }
-
-      fetch(apiUrl)
-        .then(response => {
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          return response.json();
-        })
-        .then(data => {
-          if (!Array.isArray(data)) throw new Error("Unexpected response format");
-          status.textContent = data.length
-            ? `${data.length}件のリリース情報`
-            : "公開中のリリース情報はありません。";
-          data.forEach(renderRelease);
-        })
-        .catch(error => {
-          status.textContent =
-            "リリース情報を取得できませんでした。時間をおいて再度お試しください。";
-          console.error("Failed to load release notes:", error);
-        });
-    </script>
-  </body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Google SheetsとGASで管理するリリースノート一覧">
+  <title>Release Note Hub</title>
+  <style>
+    :root{color-scheme:light;--bg:#f4f7fb;--surface:#fff;--text:#162033;--muted:#667085;--border:#dce3ed;--accent:#2459e0;--focus:#8aabff;--shadow:0 14px 40px rgb(25 51 93/9%)}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.7}button,input{font:inherit}button{color:inherit}a{color:var(--accent);text-underline-offset:3px}:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+    .hero{border-bottom:1px solid var(--border);background:radial-gradient(circle at 85% 0%,rgb(117 151 255/20%),transparent 32rem),linear-gradient(145deg,#fff,#eef3ff)}
+    .wrap,main,footer{width:min(1040px,calc(100% - 32px));margin-inline:auto}.wrap{padding:68px 0 52px}.eyebrow{margin:0 0 8px;color:#1941aa;font-size:.8rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.heading{display:flex;align-items:flex-start;justify-content:space-between;gap:32px}h1{margin:0 0 10px;font-size:clamp(2.35rem,7vw,4.4rem);line-height:1.1;letter-spacing:-.04em}.lead{max-width:680px;margin:0;color:#475467;font-size:clamp(1rem,2vw,1.12rem)}
+    .github{display:inline-flex;flex:none;align-items:center;gap:8px;margin-top:8px;padding:10px 16px;border:1px solid #b8c7ea;border-radius:10px;background:rgb(255 255 255/75%);color:var(--text);font-weight:700;text-decoration:none}.github:hover{background:#fff}.tech{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 0;padding:0;list-style:none}.tech li{padding:4px 11px;border:1px solid #cbd7ef;border-radius:999px;background:rgb(255 255 255/65%);color:#344054;font-size:.82rem;font-weight:650}
+    main{padding:40px 0 72px}.toolbar{padding:22px;border:1px solid var(--border);border-radius:16px;background:var(--surface);box-shadow:0 8px 28px rgb(25 51 93/5%)}label{display:block;margin-bottom:7px;font-size:.86rem;font-weight:750}.search{width:100%;padding:12px 14px;border:1px solid #bfc9d8;border-radius:10px;background:#f8fafc;color:var(--text)}.filter-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px}.filters{display:flex;flex-wrap:wrap;gap:8px}.filter,.action{border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer;font-weight:700}.filter{padding:6px 13px}.filter:hover{border-color:#9eb2df}.filter[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:#fff}#status{flex:none;margin:0;color:var(--muted);font-size:.9rem}
+    .release-list{display:grid;gap:16px;padding-top:24px}article,.skeleton{padding:26px;border:1px solid var(--border);border-radius:16px;background:#fff;box-shadow:var(--shadow)}article{transition:transform 160ms ease,box-shadow 160ms ease}article:hover{transform:translateY(-2px);box-shadow:0 18px 46px rgb(25 51 93/13%)}.metadata{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 10px;color:var(--muted);font-size:.9rem}.category{padding:2px 10px;border-radius:999px;background:#eef1f5;color:#475467;font-weight:750}.new{background:#e7f8ef;color:#087443}.improvement{background:#e9efff;color:#1746b0}.fix{background:#fff1e6;color:#a43d08}h2{margin:0 0 7px;font-size:clamp(1.25rem,3vw,1.5rem);line-height:1.4}article>p{margin:0;color:#344054}details{margin-top:17px;padding-top:13px;border-top:1px solid #e8ecf2}summary{color:var(--accent);cursor:pointer;font-weight:700}details p{margin:10px 0 0;color:#475467}
+    .message{padding:44px 24px;border:1px dashed #b8c3d4;border-radius:16px;background:rgb(255 255 255/55%);color:var(--muted);text-align:center}.message p{margin:0 0 14px}.action{padding:8px 15px;border-color:#9eb2df;color:#1941aa}.skeleton{min-height:150px;overflow:hidden;position:relative}.skeleton:after{position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgb(255 255 255/80%) 50%,transparent 80%);content:"";transform:translateX(-100%);animation:loading 1.4s infinite}.line{height:13px;margin-bottom:14px;border-radius:8px;background:#e7ebf1}.line.short{width:28%}.line.title{width:62%;height:22px}.line.body{width:82%}
+    footer{display:flex;justify-content:space-between;gap:20px;padding:26px 0 38px;border-top:1px solid var(--border);color:var(--muted);font-size:.84rem}footer p{margin:0}@keyframes loading{to{transform:translateX(100%)}}@media(max-width:700px){.wrap{padding:46px 0 38px}.heading,.filter-row,footer{align-items:flex-start;flex-direction:column}.github{margin-top:0}.toolbar,article,.skeleton{padding:19px}#status{order:-1}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <header class="hero"><div class="wrap">
+    <p class="eyebrow">Release information portal</p>
+    <div class="heading"><div><h1>Release Note Hub</h1><p class="lead">Google Sheetsで管理したリリース情報を、GAS API経由で取得・表示するWebアプリです。</p></div>
+      <a class="github" href="https://github.com/akaisenmenki/releasenote-hub" target="_blank" rel="noopener noreferrer">GitHubでコードを見る <span aria-hidden="true">↗</span></a></div>
+    <ul class="tech" aria-label="使用技術"><li>Google Sheets</li><li>Google Apps Script</li><li>HTML / CSS / JavaScript</li><li>Sphinx</li><li>Ubuntu / nginx</li></ul>
+  </div></header>
+  <main>
+    <section class="toolbar" aria-label="リリース情報の検索と絞り込み">
+      <label for="search">キーワード検索</label><input id="search" class="search" type="search" placeholder="タイトル・概要・詳細を検索" autocomplete="off">
+      <div class="filter-row"><div id="filters" class="filters" aria-label="カテゴリで絞り込む"></div><p id="status" role="status" aria-live="polite">リリース情報を読み込んでいます。</p></div>
+    </section>
+    <div id="releases" class="release-list" aria-live="polite" aria-busy="true"></div>
+  </main>
+  <footer><p>Google Sheets → GAS API → JavaScript</p><p>Release Note Hub</p></footer>
+  <script>
+    const apiUrl="https://script.google.com/macros/s/AKfycbzUtWl3OLZj7WKZOch82Z5WyUiYmUMTukH1cNcUH8SphhCOR07TGGskUQsugGmegAUQyA/exec";
+    const status=document.getElementById("status"),container=document.getElementById("releases"),search=document.getElementById("search"),filters=document.getElementById("filters");
+    let releases=[],activeCategory="すべて";
+    function add(parent,tag,text,className){const element=document.createElement(tag);element.textContent=text;if(className)element.className=className;parent.appendChild(element);return element}
+    function formatDate(value){const date=new Date(`${value}T00:00:00`);return Number.isNaN(date.getTime())?(value||"日付未設定"):new Intl.DateTimeFormat("ja-JP",{year:"numeric",month:"long",day:"numeric"}).format(date)}
+    function categoryClass(value){const name=String(value||"").toLowerCase();return `category ${["new","improvement","fix"].includes(name)?name:""}`}
+    function renderCard(release){const article=document.createElement("article"),metadata=document.createElement("p");metadata.className="metadata";add(metadata,"span",release.category||"Other",categoryClass(release.category));const time=add(metadata,"time",formatDate(release.releaseDate));if(release.releaseDate)time.dateTime=release.releaseDate;article.appendChild(metadata);add(article,"h2",release.title||"タイトル未設定");add(article,"p",release.summary||"概要はありません。");if(release.detail){const details=document.createElement("details");add(details,"summary","詳細を見る");add(details,"p",release.detail);article.appendChild(details)}container.appendChild(article)}
+    function showMessage(text,label,handler){container.replaceChildren();const box=document.createElement("div");box.className="message";add(box,"p",text);if(label){const button=add(box,"button",label,"action");button.type="button";button.addEventListener("click",handler)}container.appendChild(box)}
+    function renderFilters(){const categories=["すべて",...new Set(releases.map(item=>item.category||"Other"))];filters.replaceChildren();categories.forEach(category=>{const button=add(filters,"button",category,"filter");button.type="button";button.setAttribute("aria-pressed",String(category===activeCategory));button.addEventListener("click",()=>{activeCategory=category;renderFilters();renderReleases()})})}
+    function resetFilters(){search.value="";activeCategory="すべて";renderFilters();renderReleases();search.focus()}
+    function renderReleases(){const query=search.value.trim().toLocaleLowerCase("ja");const visible=releases.filter(item=>{const matchesCategory=activeCategory==="すべて"||(item.category||"Other")===activeCategory;const text=[item.title,item.summary,item.detail].join(" ").toLocaleLowerCase("ja");return matchesCategory&&text.includes(query)});container.replaceChildren();container.setAttribute("aria-busy","false");status.textContent=`${visible.length}件 / 全${releases.length}件`;if(!visible.length){const filtered=query||activeCategory!=="すべて";showMessage(filtered?"条件に一致するリリース情報はありません。":"公開中のリリース情報はありません。",filtered?"条件をクリア":"",resetFilters);return}visible.forEach(renderCard)}
+    function showLoading(){status.textContent="リリース情報を読み込んでいます。";container.setAttribute("aria-busy","true");container.replaceChildren();for(let i=0;i<2;i+=1){const card=document.createElement("div");card.className="skeleton";card.setAttribute("aria-hidden","true");["short","title","body"].forEach(type=>{const line=document.createElement("div");line.className=`line ${type}`;card.appendChild(line)});container.appendChild(card)}}
+    function loadReleases(){showLoading();fetch(apiUrl).then(response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return response.json()}).then(data=>{if(!Array.isArray(data))throw new Error("Unexpected response format");releases=data.sort((a,b)=>String(b.releaseDate||"").localeCompare(String(a.releaseDate||"")));renderFilters();renderReleases()}).catch(error=>{status.textContent="読み込みに失敗しました。";container.setAttribute("aria-busy","false");showMessage("リリース情報を取得できませんでした。時間をおいて再度お試しください。","再読み込み",loadReleases);console.error("Failed to load release notes:",error)})}
+    search.addEventListener("input",renderReleases);loadReleases();
+  </script>
+</body>
 </html>
