@@ -1,8 +1,15 @@
 # Release Note Hub
 
-Google Sheetsで管理したリリース情報を、Google Apps Script（GAS）のAPIを介してWebページに表示する個人学習用プロジェクトです。
+Release Note Hubは、Google Sheetsで管理したリリース情報を
+GAS経由で取得し、Webページとして公開する個人学習用プロジェクトです。
 
-テクニカルドキュメントの制作・変更管理・ビルド・公開までの流れを理解するため、GitHubとSphinxを組み合わせて構成しています。
+このプロジェクトでは、
+- 技術情報の構造化
+- GitHubによる変更管理
+- SphinxによるDocs-as-Code
+- Ubuntu Linux / nginxによるWeb公開
+
+までを一連で実践しています。
 
 > [!NOTE]
 > 本リポジトリは個人学習の成果物です。実務で使用しているコードやデータは含みません。
@@ -17,19 +24,13 @@ Google Sheetsで管理したリリース情報を、Google Apps Script（GAS）�
 
 ## アーキテクチャ
 
-```text
-Google Sheets
-      │ リリース情報を管理
-      ▼
-Google Apps Script
-      │ PublishedのデータをJSONで返す
-      ▼
-HTML / CSS / JavaScript
-      │ ブラウザで取得・表示
-      ▼
-Ubuntu Linux / nginx
+```mermaid
+flowchart TD
+    A[Google Sheets] --> B[Google Apps Script]
+    B --> C[JSON API]
+    C --> D[HTML / CSS / JavaScript]
+    D --> E[Ubuntu Linux / nginx]
 ```
-
 ソースコードと変更履歴はGitHubで管理し、利用手順と構成説明はSphinxで文書化しています。
 
 ## リポジトリ構成
