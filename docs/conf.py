@@ -1,11 +1,28 @@
-project = "Release Note Hub Manual"
-author = "shiro"
-release = "0.1"
+# Configuration file for the Sphinx documentation builder.
+#
+# For the full list of built-in configuration values, see the documentation:
+# https://www.sphinx-doc.org/en/master/usage/configuration.html
+
+# -- Project information -----------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+
+project = 'Release Note Hub Manual'
+copyright = '2026, shiro'
+author = 'shiro'
+release = '0.1'
+
+# -- General configuration ---------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = []
-templates_path = ["_templates"]
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-language = "ja"
-html_theme = "alabaster"
+templates_path = ['_templates']
+exclude_patterns = []
 
+language = 'ja'
+
+# -- Options for HTML output -------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
+
+html_theme = 'furo'
+html_static_path = ['_static']
