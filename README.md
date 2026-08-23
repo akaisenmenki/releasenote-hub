@@ -4,9 +4,12 @@ Release Note Hubは、Google Sheetsで管理したリリース情報を
 GAS経由で取得し、Webページとして公開する個人学習用プロジェクトです。
 
 このプロジェクトでは、
+
 - 技術情報の構造化
 - GitHubによる変更管理
 - SphinxによるDocs-as-Code
+- GitHub Actionsによる自動ビルド
+- GitHub Pagesによるドキュメント公開
 - Ubuntu Linux / nginxによるWeb公開
 
 までを一連で実践しています。
@@ -14,12 +17,21 @@ GAS経由で取得し、Webページとして公開する個人学習用プロ�
 > [!NOTE]
 > 本リポジトリは個人学習の成果物です。実務で使用しているコードやデータは含みません。
 
+## Documentation
+
+Sphinx / Furoで作成した技術ドキュメントをGitHub Pagesで公開しています。
+
+[Release Note Hub Manual](https://akaisenmenki.github.io/releasenote-hub/)
+
 ## このプロジェクトで実践したこと
 
-- GitHub Issueを起点としたbranch、commit、Pull Request、merge
+- GitHub Issueを起点としたbranch作成、commit、Pull Request、mergeによる変更管理
 - Google SheetsとGASを使った公開データの管理
 - HTML／CSS／JavaScriptによるリリースノート画面の作成
-- Sphinx／reStructuredTextによる技術ドキュメントの作成とHTMLビルド
+- Sphinx／reStructuredTextによる技術ドキュメントの作成
+- Architecture／Operation／Troubleshootingに分けたドキュメント構成
+- GitHub ActionsによるSphinxドキュメントの自動ビルド
+- GitHub Pagesによるドキュメント公開
 - Ubuntu Linuxとnginxを使った静的コンテンツの公開
 
 ## アーキテクチャ
@@ -31,23 +43,34 @@ flowchart TD
     C --> D[HTML / CSS / JavaScript]
     D --> E[Ubuntu Linux / nginx]
 ```
-ソースコードと変更履歴はGitHubで管理し、利用手順と構成説明はSphinxで文書化しています。
+
+ソースコードと変更履歴はGitHubで管理し、
+利用手順・システム構成・トラブルシューティングはSphinxで文書化しています。
 
 ## リポジトリ構成
 
 ```text
 .
-├── index.html          # リリースノート表示画面
+├── index.html               # リリースノート表示画面
 ├── gas/
-│   └── Code.gs         # 公開データをJSONで返すGAS
+│   └── Code.gs              # 公開データをJSONで返すGAS
 ├── docs/
-│   ├── conf.py         # Sphinx設定
-│   ├── index.rst       # ドキュメント原稿
-│   └── requirements.txt
+│   ├── conf.py              # Sphinx設定
+│   ├── index.rst            # ドキュメントトップ／目次
+│   ├── architecture.rst     # システム構成
+│   ├── operation.rst        # 公開・運用手順
+│   ├── troubleshooting.rst  # トラブルシューティング
+│   └── requirements.txt     # Sphinx / Furo依存関係
+├── .github/
+│   └── workflows/
+│       └── sphinx-pages.yml # Sphinxビルド／Pages公開
 └── README.md
 ```
 
 Sphinxの生成物はリポジトリに含めず、原稿と公開物を分けて管理します。
+
+mainブランチの`docs/`配下が更新されると、
+GitHub ActionsでHTMLを自動生成し、GitHub Pagesへ公開します。
 
 ## データ形式
 
@@ -70,18 +93,23 @@ Google Sheetsには次の列を用意します。
 2. 画面がGASのWebアプリからJSONを取得します。
 3. 公開対象のリリース情報が新しい順に表示されます。
 
-ローカル環境でブラウザの制約により取得できない場合は、任意の簡易HTTPサーバーまたはnginxから配信してください。
+ローカル環境でブラウザの制約により取得できない場合は、
+任意の簡易HTTPサーバーまたはnginxから配信してください。
 
 ## Sphinxドキュメントのビルド
 
 Python環境で次を実行します。
 
 ```bash
-python -m pip install -r docs/requirements.txt
+python3 -m pip install -r docs/requirements.txt
 sphinx-build -b html docs docs/_build/html
 ```
 
 生成された `docs/_build/html/index.html` をブラウザで確認します。
+
+GitHub上では、mainブランチの`docs/`配下が更新されると
+GitHub Actionsが自動的にSphinxドキュメントをビルドし、
+GitHub Pagesへ公開します。
 
 ## 公開時の確認事項
 
@@ -90,16 +118,12 @@ sphinx-build -b html docs docs/_build/html
 - `Status` が `Published` の行だけが返ること
 - WebページからGASのURLへアクセスできること
 - nginxが起動し、最新のHTMLを配信していること
+- SphinxドキュメントのGitHub Actionsが正常終了していること
+- GitHub Pagesで最新のドキュメントが公開されていること
 
 ## 今後の改善案
 
-- GitHub ActionsによるSphinxドキュメントの自動ビルド
-- リンク切れやビルドエラーの自動チェック
-- カテゴリやキーワードによる絞り込み
+- Sphinxビルド時のリンク切れチェック
+- カテゴリやキーワードによる絞り込み機能の改善
 - 読み込み中・データなし・通信失敗時の表示改善
-
-## Documentation
-
-Sphinx / Furo で作成した技術ドキュメントは以下から閲覧できます。
-
-[Release Note Hub Manual](https://akaisenmenki.github.io/releasenote-hub/)
+- GitHub Actionsによるドキュメント品質チェックの拡充
