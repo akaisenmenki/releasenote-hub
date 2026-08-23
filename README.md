@@ -97,3 +97,9 @@ sphinx-build -b html docs docs/_build/html
 - リンク切れやビルドエラーの自動チェック
 - カテゴリやキーワードによる絞り込み
 - 読み込み中・データなし・通信失敗時の表示改善
+
+## Documentation
+
+Sphinx / Furo で作成した技術ドキュメントは以下から閲覧できます。
+
+[Release Note Hub Manual](https://akaisenmenki.github.io/releasenote-hub/)
